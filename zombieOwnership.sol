@@ -5,7 +5,7 @@ import "./erc721.sol";
 
 contract ZombieOwnership is ZombieAttack, ERC721 {
 
- mapping (uint => address) zombieApprovals;
+  mapping (uint => address) zombieApprovals;
 
   function balanceOf(address _owner) public view returns (uint256 _balance) {
     return ownerZombieCount[_owner];
@@ -27,11 +27,13 @@ contract ZombieOwnership is ZombieAttack, ERC721 {
   }
 
   function approve(address _to, uint256 _tokenId) public onlyOwnerOf(_tokenId) {
-      zombieApprovals[_tokenId] = _to;
-      Approval(msg.sender, _to, _tokenId);
+    zombieApprovals[_tokenId] = _to;
+    Approval(msg.sender, _to, _tokenId);
   }
 
   function takeOwnership(uint256 _tokenId) public {
-
+    require(zombieApprovals[_tokenId] == msg.sender);
+    address owner = ownerOf(_tokenId);
+    _transfer(owner, msg.sender, _tokenId);
   }
 }
